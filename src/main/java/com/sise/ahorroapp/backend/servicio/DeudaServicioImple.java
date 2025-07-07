@@ -1,44 +1,36 @@
 package com.sise.ahorroapp.backend.servicio;
 
-import java.util.List;
-import java.util.Optional;
+import com.sise.ahorroapp.backend.entidad.Deuda;
+import com.sise.ahorroapp.backend.repositorio.DeudaRepositorio;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sise.ahorroapp.backend.entidad.Deuda;
-import com.sise.ahorroapp.backend.entidad.Usuario;
-import com.sise.ahorroapp.backend.repositorio.DeudaRepositorio;
-import com.sise.ahorroapp.backend.repositorio.UsuarioRepositorio;
+import java.util.List;
 
 @Service
 public class DeudaServicioImple implements DeudaServicio {
 
     @Autowired
     private DeudaRepositorio deudaRepositorio;
-    @Autowired
-    private UsuarioRepositorio usuarioRepositorio;
 
     @Override
-    public void guardarDeuda(Deuda deuda) {
+    public void guardar(Deuda deuda) {
         deudaRepositorio.save(deuda);
     }
 
     @Override
     public List<Deuda> listarPorUsuario(Long usuarioId) {
-        Usuario usuario = usuarioRepositorio.findById(usuarioId)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        return deudaRepositorio.findByUsuario(usuario);
-    }
-    
-    @Override
-    public List<Deuda> findByUsuario(Long usuarioId) {
         return deudaRepositorio.findByUsuarioId(usuarioId);
     }
 
+    @Override
+    public Deuda buscarPorId(Long id) {
+        return deudaRepositorio.findById(id).orElse(null);
+    }
 
     @Override
-    public Optional<Deuda> obtenerPorId(Long id) {
-        return deudaRepositorio.findById(id);
+    public void eliminar(Long id) {
+        deudaRepositorio.deleteById(id);
     }
 }

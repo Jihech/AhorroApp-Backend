@@ -16,7 +16,7 @@ public class AdminDashboardController {
     @Autowired
     private MovimientoServicio movimientoServicio;
 
-    @GetMapping("/dashboard")
+    @GetMapping("/admin/dashboard")
     public String verDashboardAdmin(Model model) {
         long totalUsuarios = usuarioServicio.contarUsuarios();
         long totalMovimientos = movimientoServicio.contarMovimientos();
@@ -24,6 +24,6 @@ public class AdminDashboardController {
         model.addAttribute("totalUsuarios", totalUsuarios);
         model.addAttribute("totalMovimientos", totalMovimientos);
 
-        return "admin_dashboard";
+        return "admin-dashboard"; // templates/admin_dashboard.html
     }
 }

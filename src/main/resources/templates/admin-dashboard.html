@@ -6,6 +6,9 @@
     <title>Panel de Administración</title>
     <link rel="stylesheet" th:href="@{/vendor/fontawesome-free/css/all.min.css}">
     <link rel="stylesheet" th:href="@{/css/sb-admin-2.min.css}">
+    <!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
 </head>
 <body id="page-top">
 
@@ -63,8 +66,8 @@
                 <span class="h5 mb-0 text-gray-800 ml-3">👑 Bienvenido Administrador</span>
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/logout}">
-                            <i class="fas fa-sign-out-alt"></i> Salir
+                        <a class="nav-link btn btn-outline-danger btn-sm" th:href="@{/logout}">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
                         </a>
                     </li>
                 </ul>
@@ -112,7 +115,7 @@
                         </div>
                     </div>
 
-                    <!-- Puedes agregar más tarjetas aquí -->
+                    <!-- Aquí puedes agregar más tarjetas -->
 
                 </div>
             </div>
@@ -122,19 +125,25 @@
     </div>
 </div>
 
-<!-- Scripts -->
 <script th:inline="javascript">
     /*<![CDATA[*/
-    const ingresos = [[${ingresosMes}]];
-    const gastos = [[${gastosMes}]];
+    const ingresos = /*[[${ingresos}]]*/ 0 || 0;
+    const gastos = /*[[${gastos}]]*/ 0 || 0;
+    const balance = /*[[${balance}]]*/ 0 || 0;
+    const ahorroActual = /*[[${ahorroActual}]]*/ 0 || 0;
+    const metaAhorro = /*[[${metaAhorro}]]*/ 0 || 0;
     /*]]>*/
 </script>
 
 
+<!-- Scripts JS -->
 <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
 <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 <script th:src="@{/js/sb-admin-2.min.js}"></script>
+<script th:src="@{/js/cerrar_sesion.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>
+

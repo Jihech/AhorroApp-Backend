@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -53,6 +56,24 @@ public class UsuarioDashboardController {
         model.addAttribute("ahorroActual", balance);
         model.addAttribute("ultimosMovimientos", movimientos); // ✅ Para la tabla
 
-        return "usuario_dashboard"; // Debe existir usuario_dashboard.html en templates
+        return "usuario-dashboard"; // Debe existir usuario_dashboard.html en templates
     }
+    
+    @PostMapping("/usuario/actualizar-meta")
+    public String actualizarMeta(@RequestParam("nuevaMeta") double nuevaMeta, Principal principal,
+                                 RedirectAttributes redirectAttrs) {
+        if (nuevaMeta <= 0) {
+            redirectAttrs.addFlashAttribute("mensajeError", "❌ La meta debe ser mayor que cero.");
+            return "redirect:/usuario/dashboard";
+        }
+
+        Usuario usuario = usuarioServicio.buscarPorCorreo(principal.getName());
+        usuario.setMetaAhorro(nuevaMeta);
+        usuarioServicio.guardarUsuario(usuario);
+
+        redirectAttrs.addFlashAttribute("mensaje", "✅ Meta de ahorro actualizada con éxito.");
+        return "redirect:/usuario/dashboard";
+    }
+
+
 }

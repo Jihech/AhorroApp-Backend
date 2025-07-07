@@ -1,39 +1,34 @@
 package com.sise.ahorroapp.backend.seguridad;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-
 import java.io.IOException;
-import java.util.Collection;
+import java.util.Set;
 
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
 
-        String redirectURL = request.getContextPath();
+        // Obtener roles del usuario autenticado
+        Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
-        // Obtener roles con prefijo ROLE_
-        Collection<? extends GrantedAuthority> roles = authentication.getAuthorities();
-
-        if (roles.stream().anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN"))) {
-            redirectURL += "/admin_dashboard";
+        // Redirigir según el rol
+        if (roles.contains("ROLE_ADMIN")) {
+            response.sendRedirect("/admin/dashboard");  // 👈 Vista específica para admin
+        } else if (roles.contains("ROLE_USER")) {
+            response.sendRedirect("/usuario/dashboard"); // 👈 Vista específica para usuario
         } else {
-            redirectURL += "/usuario_dashboard";
+            response.sendRedirect("/?error=true"); // 👈 Seguridad extra por si no hay rol
         }
-
-
-        response.sendRedirect(redirectURL);
     }
 }
-

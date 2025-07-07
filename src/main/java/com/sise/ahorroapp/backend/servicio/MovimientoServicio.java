@@ -17,4 +17,5 @@ public interface MovimientoServicio {
     long contarMovimientos();
     Double totalIngresosDelMes();
     Double totalGastosDelMes();
+    void guardar(Movimiento movimiento);
 }

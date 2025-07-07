@@ -144,7 +144,7 @@ public class WebUsuarioController {
     }
 
     // 🌟 ACTUALIZAR META DE AHORRO (solo para USER)
-    @PostMapping("/usuario/actualizar-meta")
+   /* @PostMapping("/usuario/actualizar-meta")
     public String actualizarMeta(@RequestParam("nuevaMeta") Double nuevaMeta,
                                  Principal principal,
                                  RedirectAttributes redirect) {
@@ -153,6 +153,6 @@ public class WebUsuarioController {
         usuarioServicio.guardarUsuario(usuario);
         redirect.addFlashAttribute("mensajeExito", "Meta de ahorro actualizada con éxito");
         return "redirect:/usuario";
-    }
+    }*/
 }
 

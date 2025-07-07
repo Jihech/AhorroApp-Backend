@@ -71,6 +71,9 @@ public class MovimientoServicioImple implements MovimientoServicio {
         LocalDate finMes = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
         return movimientoRepository.totalPorTipoYFecha("GASTO", inicioMes, finMes).orElse(0.0);
     }
-
-
+    
+    @Override
+    public void guardar(Movimiento movimiento) {
+        movimientoRepository.save(movimiento);
+    }
 }

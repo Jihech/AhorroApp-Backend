@@ -8,11 +8,11 @@ public class DashboardController {
 
     @GetMapping("/admin_dashboard")
     public String mostrarAdminDashboard() {
-        return "admin_dashboard";
+        return "admin-dashboard";
     }
 
     @GetMapping("/usuario_dashboard")
     public String mostrarUsuarioDashboard() {
-        return "usuario_dashboard";
+        return "usuario-dashboard";
     }
 }
