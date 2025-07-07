@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Usuarios | Backoffice</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Estilos de SB Admin 2 -->
+	<link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+	<link href="/css/sb-admin-2.min.css" rel="stylesheet">
+	<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+</head>
+
+<body id="page-top">
+
+	<div id="wrapper">
+
+		<!-- Sidebar -->
+		<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+			<a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+				<div class="sidebar-brand-icon rotate-n-15">
+					<i class="fas fa-coins"></i>
+				</div>
+				<div class="sidebar-brand-text mx-3">AhorroApp</div>
+			</a>
+
+			<hr class="sidebar-divider my-0">
+
+			<li class="nav-item active">
+				<a class="nav-link" href="/usuarios">
+					<i class="fas fa-users"></i>
+					<span>Usuarios</span>
+				</a>
+			</li>
+		</ul>
+		<!-- End Sidebar -->
+
+		<!-- Content Wrapper -->
+		<div id="content-wrapper" class="d-flex flex-column">
+			<div id="content" class="p-4">
+
+				<!-- Topbar -->
+				<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
+					<h5 class="m-0 font-weight-bold text-gray-800">Gestión de Usuarios</h5>
+				</nav>
+
+				<!-- Contenido -->
+				<div class="container-fluid">
+
+					<a class="btn btn-success mb-3" href="/usuarios/nuevo">
+						<i class="fas fa-plus"></i> Nuevo Usuario
+					</a>
+
+					<div class="card shadow">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold text-primary">Lista de Usuarios</h6>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-bordered table-hover">
+									<thead class="thead-light">
+										<tr>
+											<th>ID</th>
+											<th>Nombre</th>
+											<th>Correo</th>
+											<th>Clave</th>
+											<th>Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="usuario : ${usuarios}"
+											th:class="${!usuario.activo} ? 'table-secondary' : ''">
+											<td th:text="${usuario.id}">1</td>
+											<td th:text="${usuario.nombre}">Nombre</td>
+											<td th:text="${usuario.correo}">correo@example.com</td>
+											<td th:text="${usuario.clave}">••••••</td>
+											<td>
+												<a th:href="@{'/usuarios/editar/' + ${usuario.id}}"
+													class="btn btn-sm btn-warning">
+													<i class="fas fa-edit"></i> Editar
+												</a>
+												<!-- Si está activo, mostrar botón Desactivar -->
+												<a href="javascript:void(0)" class="btn btn-sm btn-danger"
+													th:if="${usuario.activo}"
+													th:onclick="'return confirmarEliminacion(\'/usuarios/desactivar/' + ${usuario.id} + '\')'">
+													<i class="fas fa-user-slash"></i> Desactivar
+												</a>
+
+												<!-- Si está inactivo, mostrar botón Activar -->
+												<a th:href="@{'/usuarios/activar/' + ${usuario.id}}"
+													class="btn btn-sm btn-success" th:if="${!usuario.activo}">
+													<i class="fas fa-user-check"></i> Activar
+												</a>
+
+
+
+											</td>
+
+										</tr>
+										<tr th:if="${usuarios.size() == 0}">
+											<td colspan="4" class="text-center text-muted">No hay usuarios registrados.
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- /.container-fluid -->
+
+			</div>
+
+			<!-- Footer -->
+			<footer class="sticky-footer bg-white text-center py-3">
+				<div class="container my-auto">
+					<span>© AhorroApp 2025</span>
+				</div>
+			</footer>
+
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="/vendor/jquery/jquery.min.js"></script>
+	<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+	<script src="/js/sb-admin-2.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="/js/usuario_alerta.js"></script>
+	<script src="/js/eliminar_usuario.js"></script>
+	<script src="/js/mensaje_exito.js"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+
+</html>

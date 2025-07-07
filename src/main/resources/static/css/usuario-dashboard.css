@@ -1,0 +1,33 @@
+body {
+    background-color: #1c1e21;
+    color: #fff;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.fade-out {
+    animation: fadeOut 2s forwards;
+    animation-delay: 3s;
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.animated-number {
+    font-size: 1.8rem;
+    font-weight: bold;
+}

@@ -1,0 +1,13 @@
+body {
+  background: linear-gradient(to right, #2980b9, #6dd5fa);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+  border-radius: 15px;
+}
+
+input::placeholder {
+  color: #adb5bd;
+  font-size: 0.9rem;
+}

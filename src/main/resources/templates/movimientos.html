@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Movimientos</title>
+    <link rel="stylesheet" th:href="@{/css/sb-admin-2.min.css}">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Movimientos Registrados</h2>
+
+    <a class="btn btn-primary mb-3" th:href="@{/movimientos/nuevo}">
+        <i class="fas fa-plus"></i> Nuevo Movimiento
+    </a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Monto</th>
+                <th>Tipo</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="mov : ${movimientos}">
+                <td th:text="${mov.id}">1</td>
+                <td th:text="${mov.monto}">0.00</td>
+                <td th:text="${mov.tipo}">Ingreso</td>
+                <td th:text="${mov.descripcion}">Descripción</td>
+                <td th:text="${mov.fecha}">2025-07-01</td>
+                <td th:text="${mov.usuario.nombre}">Jimmy</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

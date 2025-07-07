@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<title>AhorroApp - Bienvenido</title>
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/landing.css}">
+</head>
+
+<body>
+
+	<!-- NAV -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container">
+			<a class="navbar-brand" href="#">AhorroApp</a>
+			<div class="ms-auto">
+				<button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">
+					Iniciar sesión
+				</button>
+			</div>
+		</div>
+	</nav>
+
+	<!-- LANDING -->
+	<div class="landing-container text-center text-white bg-dark py-5">
+		<h1>Bienvenido a AhorroApp</h1>
+		<p>Gestiona tus ingresos, controla tus gastos y toma decisiones financieras inteligentes.</p>
+	</div>
+
+	<!-- MODAL -->
+	<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content bg-light">
+				<div class="modal-header">
+					<h5 class="modal-title">Bienvenido a AhorroApp</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+				</div>
+				<div class="modal-body">
+
+					<!-- Pestañas -->
+					<ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login"
+								role="tab">Iniciar Sesión</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register"
+								role="tab">Registrarse</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="reset-tab" data-bs-toggle="tab" href="#reset" role="tab">Recuperar
+								Contraseña</a>
+						</li>
+					</ul>
+
+					<!-- CONTENIDO DE LAS PESTAÑAS -->
+					<div class="tab-content" id="authTabsContent">
+						<!-- Login -->
+						<div class="tab-pane fade show active" id="login" role="tabpanel">
+							<form th:action="@{/login}" method="post">
+								<div class="mb-3">
+									<label for="login-correo" class="form-label">Correo electrónico</label>
+									<input type="email" class="form-control" id="login-correo" name="correo" required>
+								</div>
+								<div class="mb-3">
+									<label for="login-clave" class="form-label">Contraseña</label>
+									<input type="password" class="form-control" id="login-clave" name="clave" required>
+								</div>
+								<div class="d-grid">
+									<button type="submit" class="btn btn-primary">Iniciar sesión</button>
+								</div>
+							</form>
+							<div th:if="${param.error}" class="alert alert-danger mt-3">
+								Credenciales inválidas. Intenta nuevamente.
+							</div>
+						</div>
+
+						<!-- Registro -->
+						<div class="tab-pane fade" id="register" role="tabpanel">
+							<form th:action="@{/usuarios/guardar}" method="post" th:object="${usuario}">
+								<div class="mb-3">
+									<label for="register-nombre" class="form-label">Nombre</label>
+									<input type="text" id="register-nombre" th:field="*{nombre}" class="form-control"
+										required>
+								</div>
+								<div class="mb-3">
+									<label for="register-correo" class="form-label">Correo</label>
+									<input type="email" id="register-correo" th:field="*{correo}" class="form-control"
+										required>
+								</div>
+								<div class="mb-3">
+									<label for="register-clave" class="form-label">Clave</label>
+									<input type="password" id="register-clave" th:field="*{clave}" class="form-control"
+										required>
+								</div>
+								<div class="d-grid">
+									<button type="submit" class="btn btn-success">Registrarse</button>
+								</div>
+							</form>
+						</div>
+
+						<!-- Recuperar contraseña -->
+						<div class="tab-pane fade" id="reset" role="tabpanel">
+							<form>
+								<div class="mb-3">
+									<label for="reset-correo" class="form-label">Correo para recuperación</label>
+									<input type="email" id="reset-correo" name="correoReset" class="form-control"
+										required>
+								</div>
+								<div class="d-grid">
+									<button type="submit" class="btn btn-warning">Enviar enlace</button>
+								</div>
+							</form>
+						</div>
+					</div> <!-- tab-content -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- JS -->
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	<script th:src="@{/js/mensaje_exito.js}"></script>
+
+</body>
+
+</html>

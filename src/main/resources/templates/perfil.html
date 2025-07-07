@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil</title>
+
+    <!-- Estilos SB Admin 2 -->
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+
+<!-- Contenedor principal -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+        <!-- Branding -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#">
+            <div class="sidebar-brand-icon">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="sidebar-brand-text mx-3">Mi Perfil</div>
+        </a>
+
+        <hr class="sidebar-divider">
+        <li class="nav-item">
+            <a class="nav-link" href="/dashboard">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>Volver al Dashboard</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider d-none d-md-block">
+
+    </ul>
+    <!-- Fin Sidebar -->
+
+    <!-- Contenido -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+
+            <!-- Topbar -->
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- Fin Topbar -->
+
+            <!-- Contenido principal -->
+            <div class="container-fluid">
+
+                <h1 class="h3 mb-4 text-gray-800">Perfil del Usuario</h1>
+
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+                        <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}">Nombre</span></p>
+                        <p><strong>Correo:</strong> <span th:text="${usuario.correo}">correo@ejemplo.com</span></p>
+                        <p><strong>Rol:</strong> <span th:text="${usuario.rol}">ROLE_USER</span></p>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Fin contenido principal -->
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto text-center">
+                <span>© 2025 Mi App Ahorro</span>
+            </div>
+        </footer>
+        <!-- Fin Footer -->
+
+    </div>
+    <!-- Fin contenido -->
+
+</div>
+<!-- Fin contenedor principal -->
+
+<!-- Scripts SB Admin 2 -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+</body>
+</html>
