@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es" th:replace="layout :: layout(~{::body})">
+<head>
+    <title>Historial de Movimientos</title>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h3 class="mb-4 text-light">📋 Historial completo de movimientos</h3>
+
+        <div class="card shadow mb-4 bg-dark border-light">
+            <div class="card-header bg-secondary text-white">
+                <h6 class="m-0 font-weight-bold">📄 Todos los movimientos</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-white">
+                        <thead class="bg-dark text-white">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="mov : ${movimientosPage.content}">
+                                <td th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy')}"></td>
+                                <td th:text="${mov.tipo}"></td>
+                                <td th:text="${mov.descripcion}"></td>
+                                <td th:text="'S/. ' + ${mov.monto}"></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(movimientosPage.content)}">
+                                <td colspan="4" class="text-center">No hay movimientos registrados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Paginación -->
+                    <nav th:if="${totalPages > 1}">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:classappend="${i} == ${currentPage} ? 'active'">
+                                <a class="page-link"
+                                   th:href="@{/usuario/movimientos(page=${i}, size=${movimientosPage.size})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/usuario}" class="btn btn-outline-light">← Volver al Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

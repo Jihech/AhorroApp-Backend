@@ -18,9 +18,9 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Aquí es donde retornas el rol, y debe incluir el prefijo "ROLE_"
         return List.of(new SimpleGrantedAuthority(usuario.getRol()));
     }
+
 
     @Override
     public String getPassword() {

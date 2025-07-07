@@ -26,16 +26,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                // ✅ Rutas públicas, incluyendo vendor y webfonts
+                // ✅ Rutas públicas
                 .requestMatchers("/", "/css/**", "/js/**", "/img/**", "/vendor/**", "/webfonts/**", "/usuarios/nuevo", "/api/**").permitAll()
 
-                // ✅ Accesibles por usuarios autenticados (USER y ADMIN)
+                // ✅ Acceso autenticado (USER o ADMIN)
                 .requestMatchers("/usuario", "/usuario/**", "/deudas/**", "/metas/**", "/dashboard").hasAnyRole("USER", "ADMIN")
 
                 // ✅ Solo ADMIN
                 .requestMatchers("/usuarios/**", "/movimientos/**", "/perfil").hasRole("ADMIN")
-                .requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
-
+                .requestMatchers("/admin/**").hasRole("ADMIN") // ✅ ¡Agregado para dashboard de administrador!
 
                 // ✅ Todo lo demás requiere autenticación
                 .anyRequest().authenticated()
@@ -46,7 +45,7 @@ public class SecurityConfig {
                 .usernameParameter("correo")
                 .passwordParameter("clave")
                 .successHandler(successHandler)
-                .failureUrl("/?error=true") // Redirección al fallar
+                .failureUrl("/?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
@@ -58,15 +57,15 @@ public class SecurityConfig {
                 .accessDeniedPage("/error")
             )
             .userDetailsService(usuarioDetailsService)
-            .csrf(csrf -> csrf.disable()); // ⚠️ Desactiva CSRF solo si lo tienes controlado
+            .csrf(csrf -> csrf.disable()); // ⚠️ Solo para desarrollo, habilítalo si usas formularios correctamente
 
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance(); // ⚠️ Solo para desarrollo
-        // return new BCryptPasswordEncoder();   // ✅ Usa esto en producción
+        return NoOpPasswordEncoder.getInstance(); // ⚠️ No seguro, solo para pruebas
+        // return new BCryptPasswordEncoder(); // ✅ Usa esto en producción
     }
 
     @Bean
@@ -90,3 +89,4 @@ public class SecurityConfig {
         return web -> web.httpFirewall(firewall);
     }
 }
+

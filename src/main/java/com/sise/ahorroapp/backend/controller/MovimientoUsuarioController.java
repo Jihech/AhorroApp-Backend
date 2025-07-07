@@ -17,7 +17,7 @@ import com.sise.ahorroapp.backend.servicio.MovimientoServicio;
 import com.sise.ahorroapp.backend.servicio.UsuarioServicio;
 
 @Controller
-@RequestMapping("/usuario/movimiento")
+@RequestMapping("usuario/movimiento")
 public class MovimientoUsuarioController {
 
     @Autowired

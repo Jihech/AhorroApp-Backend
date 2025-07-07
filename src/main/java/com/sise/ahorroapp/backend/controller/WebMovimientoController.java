@@ -27,14 +27,14 @@ public class WebMovimientoController {
     public String mostrarMovimiento(Model model) {
         model.addAttribute("movimiento", new Movimiento());
         model.addAttribute("usuarios", usuarioServicio.listarUsuarios());
-        return "nuevo_movimiento";
+        return "form_movimiento";
     }
 
     @PostMapping("/movimientos/guardar")
     public String guardarMovimiento(@ModelAttribute Movimiento movimiento) {
     	movimiento.setFecha(LocalDate.now());
         movimientoService.guardarMovimiento(movimiento);
-        return "redirect:/dashboard"; // o /movimientos si haces lista
+        return "redirect:/usuario/dashboard"; // o /movimientos si haces lista
     }
     
     @GetMapping("/movimientos")

@@ -1,0 +1,15 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:replace="${title}">Mi App</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:fragment="layout(content)">
+        <!-- Aquí va tu menú lateral, barra superior, etc. -->
+        <div class="main-content">
+            <div th:replace="${content}"></div>
+        </div>
+        <!-- Pie de página, scripts, etc. -->
+    </div>
+</body>
+</html>

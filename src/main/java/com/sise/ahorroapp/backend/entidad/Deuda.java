@@ -1,143 +1,164 @@
 package com.sise.ahorroapp.backend.entidad;
 
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "deudas")
 public class Deuda {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private BigDecimal monto;              // Monto total de la deuda
-    private BigDecimal montoAbonado;       // Monto que se ha abonado hasta ahora
-    private String descripcion;
-    private LocalDate fechaRegistro;
-    private LocalDate fechaLimite;
-    private Boolean estado;                // true = pagada, false = pendiente
-    private String acreedor;
-    private String prioridad;              // Opcional: "Alta", "Media", "Baja"
-    private String notas;
+	private BigDecimal monto; // Monto total de la deuda
+	private BigDecimal montoAbonado; // Monto abonado hasta ahora
+	private String descripcion;
+	private LocalDate fechaRegistro;
+	private LocalDate fechaLimite;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+	@Column(nullable = false)
+	private Boolean pagada = false; // true = pagada, false = pendiente
 
-    // 🔹 Constructor vacío
-    public Deuda() {
-        this.montoAbonado = BigDecimal.ZERO;
-        this.estado = false;
-        this.fechaRegistro = LocalDate.now();
-    }
+	private String acreedor;
+	private String prioridad; // Opcional: "Alta", "Media", "Baja"
+	private String notas;
 
-    // 🔹 Constructor con campos esenciales
-    public Deuda(BigDecimal monto, String descripcion, LocalDate fechaLimite, Usuario usuario) {
-        this.monto = monto;
-        this.montoAbonado = BigDecimal.ZERO;
-        this.descripcion = descripcion;
-        this.fechaRegistro = LocalDate.now();
-        this.fechaLimite = fechaLimite;
-        this.estado = false;
-        this.usuario = usuario;
-    }
+	private Boolean estado;
+	
+	
 
-    // 🔹 Método auxiliar: cuánto falta por pagar
-    public BigDecimal getMontoRestante() {
-        if (monto == null || montoAbonado == null) return BigDecimal.ZERO;
-        return monto.subtract(montoAbonado);
-    }
+	@ManyToOne
+	@JoinColumn(name = "usuario_id")
+	private Usuario usuario;
 
-    // ✅ Getters y Setters
+	// Constructor vacío
+	public Deuda() {
+		this.montoAbonado = BigDecimal.ZERO;
+		this.fechaRegistro = LocalDate.now();
+		this.pagada = false;
+	}
+	public String getFechaLimiteFormateada() {
+	    if (fechaLimite == null) return "";
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	    return fechaLimite.format(formatter);
+	}
 
-    public Long getId() {
-        return id;
-    }
+	// Constructor con campos esenciales
+	public Deuda(BigDecimal monto, String descripcion, LocalDate fechaLimite, Usuario usuario) {
+		this.monto = monto;
+		this.montoAbonado = BigDecimal.ZERO;
+		this.descripcion = descripcion;
+		this.fechaRegistro = LocalDate.now();
+		this.fechaLimite = fechaLimite;
+		this.pagada = false;
+		this.usuario = usuario;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	// Monto restante por pagar
+	public BigDecimal getMontoRestante() {
+		if (monto == null || montoAbonado == null)
+			return BigDecimal.ZERO;
+		return monto.subtract(montoAbonado);
+	}
 
-    public BigDecimal getMonto() {
-        return monto;
-    }
+	// Getters y setters
 
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
-    }
+	public Boolean getEstado() {
+		return estado;
+	}
 
-    public BigDecimal getMontoAbonado() {
-        return montoAbonado;
-    }
+	public void setEstado(Boolean estado) {
+		this.estado = estado;
+	}
 
-    public void setMontoAbonado(BigDecimal montoAbonado) {
-        this.montoAbonado = montoAbonado;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	public BigDecimal getMonto() {
+		return monto;
+	}
 
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
+	public void setMonto(BigDecimal monto) {
+		this.monto = monto;
+	}
 
-    public void setFechaRegistro(LocalDate fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
+	public BigDecimal getMontoAbonado() {
+		return montoAbonado;
+	}
 
-    public LocalDate getFechaLimite() {
-        return fechaLimite;
-    }
+	public void setMontoAbonado(BigDecimal montoAbonado) {
+		this.montoAbonado = montoAbonado;
+	}
 
-    public void setFechaLimite(LocalDate fechaLimite) {
-        this.fechaLimite = fechaLimite;
-    }
+	public String getDescripcion() {
+		return descripcion;
+	}
 
-    public Boolean getEstado() {
-        return estado;
-    }
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
 
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
-    }
+	public LocalDate getFechaRegistro() {
+		return fechaRegistro;
+	}
 
-    public String getAcreedor() {
-        return acreedor;
-    }
+	public void setFechaRegistro(LocalDate fechaRegistro) {
+		this.fechaRegistro = fechaRegistro;
+	}
 
-    public void setAcreedor(String acreedor) {
-        this.acreedor = acreedor;
-    }
+	public LocalDate getFechaLimite() {
+		return fechaLimite;
+	}
 
-    public String getPrioridad() {
-        return prioridad;
-    }
+	public void setFechaLimite(LocalDate fechaLimite) {
+		this.fechaLimite = fechaLimite;
+	}
 
-    public void setPrioridad(String prioridad) {
-        this.prioridad = prioridad;
-    }
+	public Boolean getPagada() {
+		return pagada;
+	}
 
-    public String getNotas() {
-        return notas;
-    }
+	public void setPagada(Boolean pagada) {
+		this.pagada = pagada;
+	}
 
-    public void setNotas(String notas) {
-        this.notas = notas;
-    }
+	public String getAcreedor() {
+		return acreedor;
+	}
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
+	public void setAcreedor(String acreedor) {
+		this.acreedor = acreedor;
+	}
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+	public String getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(String prioridad) {
+		this.prioridad = prioridad;
+	}
+
+	public String getNotas() {
+		return notas;
+	}
+
+	public void setNotas(String notas) {
+		this.notas = notas;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 }

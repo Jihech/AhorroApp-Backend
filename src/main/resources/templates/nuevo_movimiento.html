@@ -8,7 +8,7 @@
 <body>
 <div class="container mt-4">
     <h2>Registrar Movimiento</h2>
-    <form th:action="@{/movimientos/guardar}" th:object="${movimiento}" method="post">
+    <form th:action="@{/movimiento/guardar}" th:object="${movimiento}" method="post">
         <div class="form-group">
             <label>Monto</label>
             <input type="number" step="0.01" class="form-control" th:field="*{monto}" required>

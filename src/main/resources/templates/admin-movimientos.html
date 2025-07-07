@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimientos de Usuarios</title>
+    <link rel="stylesheet" th:href="@{/vendor/fontawesome-free/css/all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/sb-admin-2.min.css}">
+    <style>
+        .desactivado { background-color: #f8d7da !important; color: #721c24 !important; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Panel de Movimientos por Usuario</h2>
+
+    <!-- Filtros -->
+    <form id="filtro-form" class="row mb-4">
+        <div class="col-md-3">
+            <label for="usuario">Usuario:</label>
+            <select id="usuario" class="form-control">
+                <option value="">Todos</option>
+                <option th:each="user : ${usuarios}" th:value="${user.id}" th:text="${user.nombre}">Usuario</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" class="form-control">
+                <option value="">Todos</option>
+                <option value="INGRESO">Ingreso</option>
+                <option value="GASTO">Gasto</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="fechaInicio">Desde:</label>
+            <input type="date" id="fechaInicio" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <label for="fechaFin">Hasta:</label>
+            <input type="date" id="fechaFin" class="form-control">
+        </div>
+    </form>
+
+    <!-- Tabla -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Usuario</th>
+                    <th>Tipo</th>
+                    <th>Descripción</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-movimientos">
+                <tr th:each="mov : ${movimientos}" 
+                    th:classappend="${!mov.usuario.estado} ? 'desactivado'">
+                    <td th:text="${mov.usuario.nombre}"></td>
+                    <td th:text="${mov.tipo}"></td>
+                    <td th:text="${mov.descripcion}"></td>
+                    <td th:text="'S/. ' + ${mov.monto}"></td>
+                    <td th:text="${#temporals.format(mov.fecha, 'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(movimientos)}">
+                    <td colspan="5" class="text-center">No hay movimientos registrados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/js/filtrar-movimiento.js}"></script>
+
+</body>
+</html>

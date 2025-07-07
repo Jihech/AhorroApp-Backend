@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Mis Deudas</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Estilos -->
-    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet" />
-    <link th:href="@{/css/usuario-dashboard.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/vendor/fontawesome-free/css/all.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/sb-admin-2.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/usuario-dashboard.css}" />
 </head>
 <body class="bg-dark text-white">
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-file-invoice-dollar"></i> Mis Deudas</h2>
-        <a th:href="@{/usuario/deudas/nueva}" class="btn btn-success">
+        <a class="btn btn-success" th:href="@{/usuario/deudas/nueva}">
             <i class="fas fa-plus"></i> Nueva Deuda
         </a>
     </div>
@@ -45,21 +45,22 @@
                             <td th:text="${deuda.acreedor}">Banco</td>
                             <td th:text="'S/. ' + ${deuda.monto}">S/. 200.00</td>
                             <td th:text="'S/. ' + ${deuda.montoAbonado}">S/. 50.00</td>
-                            <td th:text="'S/. ' + ${deuda.monto.subtract(deuda.montoAbonado)}">S/. 150.00</td>
+                            <td th:text="'S/. ' + ${deuda.montoRestante}">S/. 150.00</td>
                             <td>
-                                <span th:classappend="${deuda.estado} ? 'badge bg-success' : 'badge bg-warning text-dark'" 
+                                <span th:classappend="${deuda.estado} ? 'badge bg-success' : 'badge bg-warning text-dark'"
                                       th:text="${deuda.estado} ? 'Pagada' : 'Pendiente'">Pendiente</span>
                             </td>
-                            <td th:text="${#dates.format(deuda.fechaLimite, 'dd/MM/yyyy')}">15/07/2025</td>
+                            <td th:text="${deuda.fechaLimiteFormateada}">15/07/2025</td>
                             <td>
                                 <span th:classappend="|badge ${deuda.prioridad == 'Alta' ? 'bg-danger' : deuda.prioridad == 'Media' ? 'bg-warning text-dark' : 'bg-secondary'}|"
                                       th:text="${deuda.prioridad}">Media</span>
                             </td>
                             <td>
-                                <a th:href="@{'/usuario/deudas/editar/' + ${deuda.id}}" class="btn btn-sm btn-outline-light me-2">
+                                <a th:href="@{'/usuario/deudas/editar/' + ${deuda.id}}"
+                                   class="btn btn-sm btn-outline-light me-2"
+                                   title="Editar deuda">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <!-- Aquí podrías agregar botón de eliminar o ver detalles si lo deseas -->
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(deudas)}">
@@ -72,7 +73,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <a th:href="@{/usuario}" class="btn btn-outline-light">
+        <a class="btn btn-outline-light" th:href="@{/usuario/dashboard}">
             <i class="fas fa-arrow-left"></i> Volver al Panel
         </a>
     </div>
@@ -82,3 +83,4 @@
 <script th:src="@{/js/usuario-dashboard.js}"></script>
 </body>
 </html>
+

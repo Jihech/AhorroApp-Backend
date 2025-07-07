@@ -2,8 +2,10 @@ package com.sise.ahorroapp.backend.controller;
 
 import com.sise.ahorroapp.backend.entidad.Movimiento;
 import com.sise.ahorroapp.backend.entidad.Usuario;
+import com.sise.ahorroapp.backend.entidad.Deuda;
 import com.sise.ahorroapp.backend.servicio.MovimientoServicio;
 import com.sise.ahorroapp.backend.servicio.UsuarioServicio;
+import com.sise.ahorroapp.backend.servicio.DeudaServicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,13 +27,15 @@ public class UsuarioDashboardController {
     @Autowired
     private MovimientoServicio movimientoServicio;
 
+    @Autowired
+    private DeudaServicio deudaServicio;
+
     @GetMapping("/usuario/dashboard")
     public String mostrarDashboardUsuario(Model model, Principal principal) {
         if (principal == null) {
             return "redirect:/?error=sesion";
         }
 
-        // Obtener el usuario autenticado por su correo
         String correo = principal.getName();
         Usuario usuario = usuarioServicio.buscarPorCorreo(correo);
 
@@ -39,28 +43,35 @@ public class UsuarioDashboardController {
             return "redirect:/?error=usuario-no-encontrado";
         }
 
-        // Calcular ingresos, gastos y balance
         double ingresos = movimientoServicio.obtenerTotalPorTipoYUsuario("INGRESO", usuario);
         double gastos = movimientoServicio.obtenerTotalPorTipoYUsuario("GASTO", usuario);
         double balance = ingresos - gastos;
 
-        // Obtener los últimos 5 movimientos
-        List<Movimiento> movimientos = movimientoServicio.ultimosMovimientosPorUsuario(usuario.getId(), 5);
+        List<Movimiento> movimientos = movimientoServicio.ultimosMovimientosPorUsuario(usuario.getId());
 
-        // Agregar atributos al modelo
-        model.addAttribute("usuario", usuario); // ✅ Para mostrar el nombre, etc.
+
+        // ✅ Corrección: pasar el ID del usuario
+        List<Deuda> deudasPendientes = deudaServicio
+                .listarPorUsuario(usuario.getId())
+                .stream()
+                .filter(deuda -> !deuda.getPagada())
+                .toList();
+
+        model.addAttribute("usuario", usuario);
         model.addAttribute("ingresos", ingresos);
         model.addAttribute("gastos", gastos);
         model.addAttribute("balance", balance);
         model.addAttribute("metaAhorro", usuario.getMetaAhorro() != null ? usuario.getMetaAhorro() : 0);
         model.addAttribute("ahorroActual", balance);
-        model.addAttribute("ultimosMovimientos", movimientos); // ✅ Para la tabla
+        model.addAttribute("ultimosMovimientos", movimientos);
+        model.addAttribute("deudasPendientes", deudasPendientes);
 
-        return "usuario-dashboard"; // Debe existir usuario_dashboard.html en templates
+        return "usuario-dashboard";
     }
-    
+
     @PostMapping("/usuario/actualizar-meta")
-    public String actualizarMeta(@RequestParam("nuevaMeta") double nuevaMeta, Principal principal,
+    public String actualizarMeta(@RequestParam("nuevaMeta") double nuevaMeta,
+                                 Principal principal,
                                  RedirectAttributes redirectAttrs) {
         if (nuevaMeta <= 0) {
             redirectAttrs.addFlashAttribute("mensajeError", "❌ La meta debe ser mayor que cero.");
@@ -74,6 +85,5 @@ public class UsuarioDashboardController {
         redirectAttrs.addFlashAttribute("mensaje", "✅ Meta de ahorro actualizada con éxito.");
         return "redirect:/usuario/dashboard";
     }
-
-
 }
+

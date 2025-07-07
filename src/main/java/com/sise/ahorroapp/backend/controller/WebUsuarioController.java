@@ -7,6 +7,10 @@ import com.sise.ahorroapp.backend.servicio.MovimientoServicio;
 import com.sise.ahorroapp.backend.servicio.UsuarioServicio;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -18,49 +22,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.util.List;
 
-
 @Controller
 public class WebUsuarioController {
 
     @Autowired
     private UsuarioServicio usuarioServicio;
-    
+
     @Autowired
     private MovimientoServicio movimientoServicio;
 
-    // 🌟 INICIO - carga index.html con objeto usuario
-    /*@GetMapping("/")
-    public String verInicio(Model model, @RequestParam(value = "error", required = false) String error) {
-        model.addAttribute("usuario", new Usuario()); // necesario para el registro
-        if (error != null) {
-            model.addAttribute("error", "Credenciales inválidas. Intenta nuevamente.");
-        }
-        return "index";
-    }*/
-
-    // 🌟 DASHBOARD PERSONAL DEL USUARIO LOGUEADO
-    /*@GetMapping("/usuario")
-    public String vistaUsuario(Model model, Principal principal) {
-        Usuario usuario = usuarioServicio.buscarPorCorreo(principal.getName());
-        model.addAttribute("usuario", usuario);
-        return "usuario_dashboard"; // Asegúrate de tener esta vista
-    }*/
-    
+    // 🌟 DASHBOARD del usuario logueado (últimos 5 movimientos)
     @GetMapping("/usuario")
     public String vistaUsuario(Model model, Principal principal) {
-        // Buscar usuario por correo
         Usuario usuario = usuarioServicio.buscarPorCorreo(principal.getName());
-        model.addAttribute("usuario", usuario);
 
-        // Calcular ingresos, gastos y balance
         double ingresos = movimientoServicio.obtenerTotalPorTipoYUsuario("INGRESO", usuario);
         double gastos = movimientoServicio.obtenerTotalPorTipoYUsuario("GASTO", usuario);
         double balance = ingresos - gastos;
 
-        // Obtener últimos movimientos (máx. 5)
-        List<Movimiento> movimientos = movimientoServicio.ultimosMovimientosPorUsuario(usuario.getId(), 5);
+        List<Movimiento> movimientos = movimientoServicio.ultimosMovimientosPorUsuario(usuario.getId());
 
-        // Agregar al modelo
+        model.addAttribute("usuario", usuario);
         model.addAttribute("ingresos", ingresos);
         model.addAttribute("gastos", gastos);
         model.addAttribute("balance", balance);
@@ -71,18 +53,36 @@ public class WebUsuarioController {
         return "usuario_dashboard";
     }
 
-    // 🌟 PERFIL DEL USUARIO (con edición de datos)
+    // 🌟 PAGINACIÓN de todos los movimientos del usuario
+    @GetMapping("/usuario/movimientos")
+    public String listarMovimientosUsuario(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "5") int size,
+                                           Model model,
+                                           Principal principal) {
+        Usuario usuario = usuarioServicio.buscarPorCorreo(principal.getName());
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Movimiento> movimientosPage = movimientoServicio.listarMovimientosPorUsuario(usuario.getId(), pageable);
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("movimientosPage", movimientosPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", movimientosPage.getTotalPages());
+
+        return "movimientos_usuario"; // Vista que debe mostrar la tabla paginada
+    }
+
+    // 🌟 PERFIL DEL USUARIO
     @GetMapping("/perfil")
     public String verPerfil(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof UsuarioDetails) {
-            UsuarioDetails userDetails = (UsuarioDetails) auth.getPrincipal();
-            Usuario usuario = userDetails.getUsuario();
-            model.addAttribute("usuario", usuario);
+        if (auth != null && auth.getPrincipal() instanceof UsuarioDetails userDetails) {
+            model.addAttribute("usuario", userDetails.getUsuario());
         }
         return "perfil";
     }
 
+    // 🌟 ACTUALIZAR USUARIO
     @PostMapping("/usuarios/actualizar")
     public String actualizarUsuario(@ModelAttribute("usuario") Usuario usuario) {
         usuarioServicio.guardarUsuario(usuario);
@@ -96,15 +96,7 @@ public class WebUsuarioController {
         return "nuevo_usuario";
     }
 
-    // 🌟 LISTADO DE USUARIOS (solo ADMIN)
-    @GetMapping("/usuarios")
-    public String mostrarUsuarios(Model model) {
-        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
-        model.addAttribute("usuarios", usuarios);
-        return "usuarios";
-    }
-
-    // 🌟 GUARDAR USUARIO (registro)
+    // 🌟 GUARDAR USUARIO
     @PostMapping("/usuarios/guardar")
     public String guardarUsuario(@ModelAttribute("usuario") Usuario usuario) {
         usuario.setRol("USER");
@@ -113,16 +105,24 @@ public class WebUsuarioController {
         return "redirect:/?creado=true";
     }
 
-    // 🌟 FORMULARIO EDITAR USUARIO (ADMIN)
+    // 🌟 LISTADO DE USUARIOS
+    @GetMapping("/usuarios")
+    public String mostrarUsuarios(Model model) {
+        List<Usuario> usuarios = usuarioServicio.listarUsuarios();
+        model.addAttribute("usuarios", usuarios);
+        return "usuarios";
+    }
+
+    // 🌟 EDITAR USUARIO
     @GetMapping("/usuarios/editar/{id}")
     public String mostrarFormularioEditar(@PathVariable("id") Long id, Model model) {
         Usuario usuario = usuarioServicio.obtenerUsuarioPorId(id)
-            .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("ID inválido: " + id));
         model.addAttribute("usuario", usuario);
         return "nuevo_usuario";
     }
 
-    // 🌟 ACTIVAR / DESACTIVAR USUARIO
+    // 🌟 DESACTIVAR USUARIO
     @GetMapping("/usuarios/desactivar/{id}")
     public String desactivarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         usuarioServicio.obtenerUsuarioPorId(id).ifPresent(usuario -> {
@@ -133,6 +133,7 @@ public class WebUsuarioController {
         return "redirect:/usuarios";
     }
 
+    // 🌟 ACTIVAR USUARIO
     @GetMapping("/usuarios/activar/{id}")
     public String activarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         usuarioServicio.obtenerUsuarioPorId(id).ifPresent(usuario -> {
@@ -142,17 +143,4 @@ public class WebUsuarioController {
         });
         return "redirect:/usuarios";
     }
-
-    // 🌟 ACTUALIZAR META DE AHORRO (solo para USER)
-   /* @PostMapping("/usuario/actualizar-meta")
-    public String actualizarMeta(@RequestParam("nuevaMeta") Double nuevaMeta,
-                                 Principal principal,
-                                 RedirectAttributes redirect) {
-        Usuario usuario = usuarioServicio.buscarPorCorreo(principal.getName());
-        usuario.setMetaAhorro(nuevaMeta);
-        usuarioServicio.guardarUsuario(usuario);
-        redirect.addFlashAttribute("mensajeExito", "Meta de ahorro actualizada con éxito");
-        return "redirect:/usuario";
-    }*/
 }
-

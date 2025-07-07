@@ -9,13 +9,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Repository
-public interface MovimientoRepositorio extends JpaRepository<Movimiento, Long> {
+public interface MovimientoRepositorio extends JpaRepository<Movimiento, Long>, JpaSpecificationExecutor<Movimiento> {
+	
+	 List<Movimiento> findTop5ByUsuarioIdOrderByFechaDesc(Long usuarioId);
+	 Page<Movimiento> findByUsuarioIdOrderByFechaDesc(Long usuarioId, Pageable pageable);
+
+
 	 List<Movimiento> findByUsuario(Usuario usuario);
 	 @Query("SELECT SUM(m.monto) FROM Movimiento m WHERE m.usuario = :usuario AND m.tipo = :tipo")
 	 Double sumMontoByTipoAndUsuario(@Param("tipo") String tipo, @Param("usuario") Usuario usuario);
