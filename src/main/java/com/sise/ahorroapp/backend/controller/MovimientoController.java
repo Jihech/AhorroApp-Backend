@@ -23,41 +23,60 @@ public class MovimientoController {
     private MovimientoServicio movimientoService;
 
     @Autowired
-    private UsuarioServicio usuarioService; // ✅ ahora sí se inyecta correctamente
+    private UsuarioServicio usuarioService;
 
+    // ✅ Crear movimiento asociando correctamente al usuario recibido desde Android
     @PostMapping
     public ResponseEntity<Movimiento> crearMovimiento(@RequestBody Movimiento movimiento) {
-        // ✅ Suplantar temporalmente el usuario con ID 1L
-        Optional<Usuario> optionalUsuario = usuarioService.obtenerUsuarioPorId(1L); // Ajusta el ID según tu base
-
-        if (optionalUsuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        // Validar si el objeto usuario viene con ID
+        if (movimiento.getUsuario() == null || movimiento.getUsuario().getId() == null) {
+            return ResponseEntity.badRequest().body(null);
         }
 
-        movimiento.setUsuario(optionalUsuario.get());
+        // Buscar usuario por ID
+        Optional<Usuario> usuarioOpt = usuarioService.obtenerUsuarioPorId(movimiento.getUsuario().getId());
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
 
+        // Asociar usuario real al movimiento antes de guardar
+        movimiento.setUsuario(usuarioOpt.get());
         Movimiento guardado = movimientoService.guardarMovimiento(movimiento);
         return ResponseEntity.ok(guardado);
     }
 
-
-
-
-
+    // 🔍 Listar todos los movimientos (⚠️ Solo para pruebas/admin)
     @GetMapping
-    public List<Movimiento> listarMovimientos() {
-        return movimientoService.listarMovimientos();
+    public ResponseEntity<List<Movimiento>> listarMovimientos() {
+        List<Movimiento> movimientos = movimientoService.listarMovimientos();
+        return ResponseEntity.ok(movimientos);
     }
 
+    // 🔍 Obtener un movimiento por su ID
     @GetMapping("/{id}")
-    public Movimiento obtenerMovimiento(@PathVariable Long id) {
-        return movimientoService.obtenerMovimientoPorId(id).orElse(null);
+    public ResponseEntity<Movimiento> obtenerMovimiento(@PathVariable Long id) {
+        return movimientoService.obtenerMovimientoPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // 🗑️ Eliminar un movimiento por ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarMovimiento(@PathVariable Long id) {
         movimientoService.eliminarMovimiento(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 📄 Listar movimientos por ID de usuario
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<Movimiento>> listarMovimientosPorUsuario(@PathVariable Long id) {
+        Optional<Usuario> usuarioOpt = usuarioService.obtenerUsuarioPorId(id);
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        List<Movimiento> movimientos = movimientoService.listarPorUsuario(usuarioOpt.get());
+        return ResponseEntity.ok(movimientos);
     }
 }
 
