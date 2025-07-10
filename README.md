@@ -1,6 +1,14 @@
 # AhorroApp - Backend y Panel Administrativo
 
 Este proyecto contiene el **backend REST API** desarrollado en **Spring Boot** y el **panel de administración (backoffice)** desarrollado con **Thymeleaf + SB Admin 2**.
+---
+
+##🙍Integrantes🙍
+-MICHEEL OLIVARES ROJAS
+-JIMMY HERENCIA CHAMBI
+
+---
+
 
 ## 🔧 Funcionalidades principales
 
